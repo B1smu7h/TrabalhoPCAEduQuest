@@ -32,6 +32,8 @@ const params = new URLSearchParams(window.location.search);
 const subjectKey = params.get("materia") || "matematica";
 const subject = questionSets[subjectKey] || questionSets.matematica;
 const storageKey = "eduquest-xp";
+const answeredKey = "eduquest-answered";
+const correctKey = "eduquest-correct";
 
 let currentQuestion = 0;
 let correctAnswers = 0;
@@ -87,12 +89,14 @@ function renderQuestion() {
 function chooseAnswer(selectedIndex, selectedButton) {
   if (answered) return;
   answered = true;
+  localStorage.setItem(answeredKey, String(Number(localStorage.getItem(answeredKey) || 0) + 1));
   const question = subject.questions[currentQuestion];
   const optionButtons = [...optionsContainer.querySelectorAll("button")];
   optionButtons.forEach(button => button.disabled = true);
 
   if (selectedIndex === question.answer) {
     correctAnswers++;
+    localStorage.setItem(correctKey, String(Number(localStorage.getItem(correctKey) || 0) + 1));
     localStorage.setItem(storageKey, String(readXP() + 10));
     selectedButton.classList.add("answer-correct");
     feedback.textContent = `Acertou! +10 XP. ${question.explanation}`;

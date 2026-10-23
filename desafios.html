@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Responda aos desafios do EduQuest e pratique seus conhecimentos.">
+  <title>Desafios — EduQuest</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/quiz.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="EduQuest, página inicial">
+      <span class="brand-mark" aria-hidden="true">E</span><span>Edu<span class="brand-accent">Quest</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="index.html#disciplinas">Disciplinas</a>
+      <a href="index.html#como-funciona">Como funciona</a>
+    </nav>
+    <a class="header-cta" href="index.html">← Página inicial</a>
+  </header>
+
+  <main class="quiz-main">
+    <section class="quiz-intro">
+      <p class="eyebrow">Sua próxima missão</p>
+      <h1 id="quiz-title">Desafio <span>EduQuest</span></h1>
+      <p id="quiz-description">Escolha uma resposta, confira o feedback e continue praticando.</p>
+      <div class="xp-summary"><span>Seu XP</span><strong id="xp-total">0 XP</strong></div>
+    </section>
+
+    <section class="quiz-panel" aria-live="polite">
+      <div class="quiz-progress-row">
+        <span id="question-count">Pergunta 1 de 3</span>
+        <span id="quiz-score">Acertos: 0</span>
+      </div>
+      <div class="quiz-progress-track"><div id="progress-fill" class="quiz-progress-fill"></div></div>
+      <h2 id="question-text">Carregando desafio…</h2>
+      <div id="answer-options" class="answer-options"></div>
+      <p id="feedback" class="quiz-feedback" role="status"></p>
+      <button id="next-button" class="button button-primary quiz-next" type="button" disabled>Próxima pergunta →</button>
+    </section>
+    <p class="quiz-footnote">Protótipo acadêmico: o progresso fica salvo neste navegador.</p>
+  </main>
+
+  <footer class="site-footer"><a class="brand footer-brand" href="index.html"><span class="brand-mark">E</span><span>Edu<span class="brand-accent">Quest</span></span></a><p>Aprenda no seu ritmo. Uma missão de cada vez.</p><span>© EduQuest · PCA Aplicações Web</span></footer>
+</body>
+</html>

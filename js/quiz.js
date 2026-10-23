@@ -35,7 +35,8 @@ const storageKey = "eduquest-xp";
 
 let currentQuestion = 0;
 let correctAnswers = 0;
-let answered = false;\nlet finished = false;
+let answered = false;
+let finished = false;
 
 const title = document.querySelector("#quiz-title");
 const description = document.querySelector("#quiz-description");
@@ -60,6 +61,7 @@ function showXP() {
 }
 
 function renderQuestion() {
+  finished = false;
   const question = subject.questions[currentQuestion];
   answered = false;
   questionCount.textContent = `Pergunta ${currentQuestion + 1} de ${subject.questions.length}`;
@@ -109,6 +111,7 @@ function chooseAnswer(selectedIndex, selectedButton) {
 }
 
 function showResults() {
+  finished = true;
   questionCount.textContent = "Missão concluída";
   progressFill.style.width = "100%";
   questionText.textContent = `Você acertou ${correctAnswers} de ${subject.questions.length}!`;

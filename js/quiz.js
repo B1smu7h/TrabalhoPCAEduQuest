@@ -4,7 +4,7 @@ const questionSets = {
     description: "Use o raciocínio e resolva estas questões.",
     questions: [
       { text: "Quanto é 7 × 8?", options: ["54", "56", "64", "48"], answer: 1, explanation: "7 × 8 = 56." },
-      { text: "Qual é o resultado de 15 + 27?", options: ["32", "40", "42", "ке"], answer: 2, explanation: "15 + 27 = 42." },
+      { text: "Qual é o resultado de 15 + 27?", options: ["32", "40", "42", "45"], answer: 2, explanation: "15 + 27 = 42." },
       { text: "Um quadrado tem lados de 4 cm. Qual é seu perímetro?", options: ["8 cm", "12 cm", "16 cm", "20 cm"], answer: 2, explanation: "O perímetro é a soma dos quatro lados: 4 × 4 = 16 cm." }
     ]
   },
@@ -35,7 +35,7 @@ const storageKey = "eduquest-xp";
 
 let currentQuestion = 0;
 let correctAnswers = 0;
-let answered = false;
+let answered = false;\nlet finished = false;
 
 const title = document.querySelector("#quiz-title");
 const description = document.querySelector("#quiz-description");
@@ -119,16 +119,14 @@ function showResults() {
     : "Boa prática! Você pode tentar novamente e aprender com o feedback.";
   nextButton.textContent = "Tentar novamente ↻";
   nextButton.disabled = false;
-  nextButton.onclick = () => {
-    currentQuestion = 0;
-    correctAnswers = 0;
-    nextButton.onclick = null;
-    renderQuestion();
-  };
 }
 
 nextButton.addEventListener("click", () => {
-  if (currentQuestion < subject.questions.length - 1) {
+  if (finished) {
+    currentQuestion = 0;
+    correctAnswers = 0;
+    renderQuestion();
+  } else if (currentQuestion < subject.questions.length - 1) {
     currentQuestion++;
     renderQuestion();
   } else {

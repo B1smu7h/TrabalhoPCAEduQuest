@@ -117,3 +117,35 @@ h1 span, h2 span { color: var(--purple); }
   .floating-card-bottom { left: 8px; bottom: 24px; }
   .site-footer { align-items: flex-start; flex-direction: column; }
 }
+
+/* Dark theme: conforto visual mantendo a identidade roxa do EduQuest */
+:root {
+  color-scheme: dark;
+  --ink: #eeeafc;
+  --muted: #aaa5c1;
+  --purple: #a99bff;
+  --purple-dark: #8875f5;
+  --lavender: #292442;
+  --line: #38334d;
+  --paper: #12111a;
+  --mint: #20372f;
+  --yellow: #3b3020;
+  --pink: #3a252e;
+}
+body { background: var(--paper); color: var(--ink); }
+.main-nav { color: #b9b4ce; }
+.header-cta { border-color: #4b426f; color: var(--purple); }
+.hero-description, .text-link, .floating-card small, .subject-card p,
+.step p, .about-strip p:last-child { color: var(--muted); }
+.hero-note, .subject-tag, .site-footer { color: #928ca9; }
+.hero-art { background: radial-gradient(circle at 50% 48%, #30284f 0, #211c36 45%, #191622 78%); }
+.orbit { border-color: #514775; }
+.orbit-two { border-color: #3d3558; }
+.floating-card { background: #262233; border-color: #39334c; }
+.subject-card { background: #1d1a29; border-color: var(--line); }
+.subject-card:hover { box-shadow: 0 15px 35px #00000030; }
+.how-section { background: #1c1929; }
+.step { border-bottom-color: #39334d; }
+.site-footer { border-top-color: var(--line); }
+.footer-brand { color: var(--ink); }
+.button-primary { color: #fff; }

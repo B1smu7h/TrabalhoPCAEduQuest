@@ -176,3 +176,19 @@ body { background: var(--paper); color: var(--ink); }
 .quiz-next:disabled { opacity: .45; cursor: not-allowed; }
 .quiz-footnote { margin: 20px 0 0; color: var(--muted); font-size: .78rem; text-align: center; }
 @media (max-width: 520px) { .quiz-main { padding: 38px 18px 60px; } .quiz-panel { border-radius: 18px; } }
+
+/* Página de progresso */
+.progress-main { max-width: 980px; min-height: 68vh; margin: 0 auto; padding: 58px 24px 80px; }
+.progress-heading { margin-bottom: 32px; }
+.progress-heading h1 { margin-bottom: 12px; font-size: clamp(2.4rem, 5vw, 3.7rem); }
+.progress-heading > p:last-child { color: var(--muted); }
+.progress-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.progress-card { padding: 25px; border: 1px solid var(--line); border-radius: 20px; background: #1d1a29; }
+.progress-card-icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 20px; border-radius: 12px; background: var(--lavender); color: var(--purple); font-size: 1.2rem; }
+.progress-card p { margin-bottom: 5px; color: var(--muted); font-size: .85rem; }
+.progress-card strong { font: 700 2rem 'Space Grotesk', sans-serif; }
+.progress-message { margin-top: 24px; padding: 30px; border: 1px solid var(--line); border-radius: 20px; background: #1c1929; }
+.progress-message h2 { margin-bottom: 9px; font-size: 1.4rem; }
+.progress-message p { color: var(--muted); }
+.progress-message .button { margin-top: 6px; }
+@media (max-width: 650px) { .progress-main { padding: 40px 18px 60px; } .progress-grid { grid-template-columns: 1fr; } .progress-card { padding: 20px; } .progress-card-icon { margin-bottom: 12px; } }

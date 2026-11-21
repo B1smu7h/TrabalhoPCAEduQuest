@@ -3,34 +3,87 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Acompanhe seu XP, acertos e desempenho por disciplina no EduQuest.">
+  <meta name="theme-color" content="#12111a">
+  <meta property="og:title" content="Meu progresso — EduQuest">
+  <meta property="og:description" content="Veja suas conquistas, seu aproveitamento e seu melhor resultado em cada disciplina.">
+  <meta property="og:type" content="website">
   <title>Meu progresso — EduQuest</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/questions.js" defer></script>
+  <script src="js/storage.js" defer></script>
   <script src="js/progresso.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <header class="site-header">
-    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">E</span><span>Edu<span class="brand-accent">Quest</span></span></a>
-    <nav class="main-nav" aria-label="Navegação principal"><a href="index.html#disciplinas">Disciplinas</a><a href="desafios.html">Desafios</a></nav>
+    <a class="brand" href="index.html" aria-label="EduQuest, página inicial"><span class="brand-mark" aria-hidden="true">E</span><span>Edu<span class="brand-accent">Quest</span></span></a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="index.html#disciplinas">Disciplinas</a>
+      <a href="desafios.html">Desafios</a>
+      <a href="progresso.html" aria-current="page">Progresso</a>
+    </nav>
     <a class="header-cta" href="index.html">← Página inicial</a>
   </header>
-  <main class="progress-main">
+
+  <main class="progress-main" id="conteudo">
     <section class="progress-heading">
       <p class="eyebrow">Sua jornada até aqui</p>
       <h1>Meu <span>progresso</span></h1>
       <p>Veja suas conquistas enquanto pratica no EduQuest.</p>
+      <p id="last-activity" class="last-activity">Nenhuma atividade registrada ainda.</p>
     </section>
+
     <section class="progress-grid" aria-label="Estatísticas do seu progresso">
-      <article class="progress-card"><span class="progress-card-icon">✦</span><p>XP acumulado</p><strong id="progress-xp">0 XP</strong></article>
-      <article class="progress-card"><span class="progress-card-icon">✓</span><p>Perguntas respondidas</p><strong id="progress-answered">0</strong></article>
-      <article class="progress-card"><span class="progress-card-icon">◎</span><p>Respostas corretas</p><strong id="progress-correct">0</strong></article>
+      <article class="progress-card"><span class="progress-card-icon" aria-hidden="true">✦</span><p>XP acumulado</p><strong id="progress-xp">0 XP</strong></article>
+      <article class="progress-card"><span class="progress-card-icon" aria-hidden="true">✓</span><p>Perguntas respondidas</p><strong id="progress-answered">0</strong></article>
+      <article class="progress-card"><span class="progress-card-icon" aria-hidden="true">◎</span><p>Respostas corretas</p><strong id="progress-correct">0</strong></article>
+      <article class="progress-card"><span class="progress-card-icon" aria-hidden="true">%</span><p>Aproveitamento</p><strong id="progress-accuracy">0%</strong></article>
     </section>
-    <section class="progress-message">
+
+    <section class="progress-subjects" aria-labelledby="subjects-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Por disciplina</p><h2 id="subjects-title">Seu <span>desempenho</span></h2></div>
+        <p class="section-intro">O melhor resultado de cada jornada fica registrado aqui.</p>
+      </div>
+      <div id="subject-progress-list" class="subject-progress-list"></div>
+    </section>
+
+    <section class="progress-message" aria-labelledby="progress-message-title">
       <h2 id="progress-message-title">Toda jornada começa com uma pergunta.</h2>
       <p id="progress-message-text">Faça um desafio para registrar suas primeiras conquistas aqui.</p>
       <a class="button button-primary" href="index.html#disciplinas">Escolher um desafio →</a>
     </section>
+
+    <section class="progress-reset" aria-labelledby="reset-title">
+      <div>
+        <h2 id="reset-title">Recomeçar do zero</h2>
+        <p>Apaga o XP, as estatísticas e os resultados salvos neste navegador.</p>
+      </div>
+      <button id="reset-progress" class="button button-ghost" type="button">Limpar progresso</button>
+    </section>
+
     <p class="quiz-footnote">Seus dados ficam salvos neste navegador. Este protótipo não usa conta ou servidor.</p>
+    <noscript><p class="noscript-note">Ative o JavaScript para visualizar e salvar seu progresso.</p></noscript>
   </main>
-  <footer class="site-footer"><a class="brand footer-brand" href="index.html"><span class="brand-mark">E</span><span>Edu<span class="brand-accent">Quest</span></span></a><p>Aprenda no seu ritmo. Uma missão de cada vez.</p><span>© EduQuest · PCA Aplicações Web</span></footer>
+
+  <dialog id="reset-dialog" class="confirm-dialog" aria-labelledby="reset-dialog-title">
+    <h2 id="reset-dialog-title">Limpar todo o progresso?</h2>
+    <p>Essa ação remove o XP, as respostas registradas e o melhor resultado de cada disciplina. Não é possível desfazer.</p>
+    <div class="dialog-actions">
+      <button id="cancel-reset" class="button button-ghost" type="button">Cancelar</button>
+      <button id="confirm-reset" class="button button-danger" type="button">Sim, limpar</button>
+    </div>
+  </dialog>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="index.html"><span class="brand-mark" aria-hidden="true">E</span><span>Edu<span class="brand-accent">Quest</span></span></a>
+    <p>Aprenda no seu ritmo. Uma missão de cada vez.</p>
+    <div class="footer-meta">
+      <a href="https://github.com/B1smu7h/TrabalhoPCAEduQuest" target="_blank" rel="noopener">GitHub ↗</a>
+      <span>© EduQuest · PCA Aplicações Web</span>
+    </div>
+  </footer>
 </body>
 </html>

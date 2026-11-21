@@ -7,7 +7,7 @@ O EduQuest transforma a prática de conteúdos escolares em uma jornada: o estud
 ## Demonstração
 
 - **Site:** abra o `index.html` no navegador ou execute um servidor local (veja abaixo).
-- **Vídeo no YouTube:** _a ser adicionado após a gravação._
+- **Vídeo no YouTube:** [youtu.be/VYacyZbei04](https://youtu.be/VYacyZbei04)
 - **Repositório:** [github.com/B1smu7h/TrabalhoPCAEduQuest](https://github.com/B1smu7h/TrabalhoPCAEduQuest)
 
 ## Funcionalidades

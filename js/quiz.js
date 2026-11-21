@@ -1,86 +1,90 @@
-const questionSets = {
-  matematica: {
-    title: "Matemática",
-    description: "Use o raciocínio e resolva estas questões.",
-    questions: [
-      { text: "Quanto é 7 × 8?", options: ["54", "56", "64", "48"], answer: 1, explanation: "7 × 8 = 56." },
-      { text: "Qual é o resultado de 15 + 27?", options: ["32", "40", "42", "45"], answer: 2, explanation: "15 + 27 = 42." },
-      { text: "Um quadrado tem lados de 4 cm. Qual é seu perímetro?", options: ["8 cm", "12 cm", "16 cm", "20 cm"], answer: 2, explanation: "O perímetro é a soma dos quatro lados: 4 × 4 = 16 cm." }
-    ]
-  },
-  ciencias: {
-    title: "Ciências",
-    description: "Explore conceitos básicos sobre a natureza.",
-    questions: [
-      { text: "Qual planeta é conhecido como Planeta Vermelho?", options: ["Vênus", "Marte", "Júpiter", "Mercúrio"], answer: 1, explanation: "Marte recebe esse apelido por causa da aparência avermelhada de sua superfície." },
-      { text: "Qual órgão bombeia o sangue pelo corpo?", options: ["Pulmão", "Estômago", "Coração", "Rim"], answer: 2, explanation: "O coração bombeia o sangue pelo sistema circulatório." },
-      { text: "Em condições comuns, a água congela a que temperatura?", options: ["0 °C", "10 °C", "50 °C", "100 °C"], answer: 0, explanation: "A água pura congela a 0 °C sob pressão atmosférica padrão." }
-    ]
-  },
-  historia: {
-    title: "História",
-    description: "Relembre acontecimentos e períodos históricos.",
-    questions: [
-      { text: "Em que ano ocorreu a Independência do Brasil?", options: ["1500", "1822", "1889", "1922"], answer: 1, explanation: "A Independência do Brasil foi proclamada em 1822." },
-      { text: "Qual civilização construiu as pirâmides de Gizé?", options: ["Romana", "Egípcia", "Inca", "Grega"], answer: 1, explanation: "As pirâmides de Gizé foram construídas no Antigo Egito." },
-      { text: "A chegada dos portugueses ao território que hoje é o Brasil ocorreu em:", options: ["1492", "1500", "1600", "1822"], answer: 1, explanation: "A chegada da expedição portuguesa é tradicionalmente datada de 1500." }
-    ]
-  }
-};
-
 const params = new URLSearchParams(window.location.search);
-const subjectKey = params.get("materia") || "matematica";
-const subject = questionSets[subjectKey] || questionSets.matematica;
-const storageKey = "eduquest-xp";
-const answeredKey = "eduquest-answered";
-const correctKey = "eduquest-correct";
+const requestedSubject = params.get("materia");
+const subjectKey = Object.prototype.hasOwnProperty.call(questionSets, requestedSubject)
+  ? requestedSubject
+  : "matematica";
+const subject = questionSets[subjectKey];
+const totalQuestions = subject.questions.length;
 
 let currentQuestion = 0;
 let correctAnswers = 0;
+let roundXP = 0;
 let answered = false;
-let finished = false;
 
 const title = document.querySelector("#quiz-title");
 const description = document.querySelector("#quiz-description");
+const tabs = document.querySelector("#subject-tabs");
+const xpTotal = document.querySelector("#xp-total");
 const questionCount = document.querySelector("#question-count");
 const scoreLabel = document.querySelector("#quiz-score");
 const progressFill = document.querySelector("#progress-fill");
+const questionView = document.querySelector("#question-view");
 const questionText = document.querySelector("#question-text");
 const optionsContainer = document.querySelector("#answer-options");
 const feedback = document.querySelector("#feedback");
 const nextButton = document.querySelector("#next-button");
-const xpTotal = document.querySelector("#xp-total");
-
-title.innerHTML = `Desafio <span>${subject.title}</span>`;
-description.textContent = subject.description;
-
-function readXP() {
-  return Number(localStorage.getItem(storageKey) || 0);
-}
+const resultView = document.querySelector("#result-view");
+const resultTitle = document.querySelector("#result-title");
+const resultMessage = document.querySelector("#result-message");
+const resultScore = document.querySelector("#result-score");
+const resultXP = document.querySelector("#result-xp");
+const resultBest = document.querySelector("#result-best");
+const retryButton = document.querySelector("#retry-button");
 
 function showXP() {
-  xpTotal.textContent = `${readXP()} XP`;
+  xpTotal.textContent = `${EduQuestStorage.getStats().xp} XP`;
+}
+
+function renderTabs() {
+  tabs.replaceChildren();
+  Object.entries(questionSets).forEach(([key, set]) => {
+    const link = document.createElement("a");
+    link.className = "subject-tab";
+    link.href = `desafios.html?materia=${key}`;
+    link.textContent = set.title;
+
+    if (key === subjectKey) {
+      link.classList.add("is-active");
+      link.setAttribute("aria-current", "page");
+    }
+
+    tabs.append(link);
+  });
 }
 
 function renderQuestion() {
-  finished = false;
   const question = subject.questions[currentQuestion];
   answered = false;
-  questionCount.textContent = `Pergunta ${currentQuestion + 1} de ${subject.questions.length}`;
+
+  questionView.hidden = false;
+  resultView.hidden = true;
+  questionCount.textContent = `Pergunta ${currentQuestion + 1} de ${totalQuestions}`;
   scoreLabel.textContent = `Acertos: ${correctAnswers}`;
-  progressFill.style.width = `${(currentQuestion / subject.questions.length) * 100}%`;
+  progressFill.style.width = `${(currentQuestion / totalQuestions) * 100}%`;
   questionText.textContent = question.text;
   feedback.textContent = "";
   feedback.className = "quiz-feedback";
   nextButton.disabled = true;
-  nextButton.textContent = currentQuestion === subject.questions.length - 1 ? "Ver resultado →" : "Próxima pergunta →";
+  nextButton.textContent = currentQuestion === totalQuestions - 1
+    ? "Ver resultado →"
+    : "Próxima pergunta →";
+
   optionsContainer.replaceChildren();
 
   question.options.forEach((option, index) => {
     const button = document.createElement("button");
+    const letter = document.createElement("span");
+    const label = document.createElement("span");
+
     button.type = "button";
     button.className = "answer-option";
-    button.textContent = option;
+    letter.className = "option-letter";
+    letter.setAttribute("aria-hidden", "true");
+    letter.textContent = String.fromCharCode(65 + index);
+    label.className = "option-text";
+    label.textContent = option;
+
+    button.append(letter, label);
     button.addEventListener("click", () => chooseAnswer(index, button));
     optionsContainer.append(button);
   });
@@ -89,51 +93,69 @@ function renderQuestion() {
 function chooseAnswer(selectedIndex, selectedButton) {
   if (answered) return;
   answered = true;
-  localStorage.setItem(answeredKey, String(Number(localStorage.getItem(answeredKey) || 0) + 1));
-  const question = subject.questions[currentQuestion];
-  const optionButtons = [...optionsContainer.querySelectorAll("button")];
-  optionButtons.forEach(button => button.disabled = true);
 
-  if (selectedIndex === question.answer) {
+  const question = subject.questions[currentQuestion];
+  const isCorrect = selectedIndex === question.answer;
+  const optionButtons = [...optionsContainer.querySelectorAll("button")];
+
+  optionButtons.forEach((button) => {
+    button.disabled = true;
+  });
+
+  EduQuestStorage.saveAnswer(isCorrect);
+
+  if (isCorrect) {
     correctAnswers++;
-    localStorage.setItem(correctKey, String(Number(localStorage.getItem(correctKey) || 0) + 1));
-    localStorage.setItem(storageKey, String(readXP() + 10));
+    roundXP += 10;
     selectedButton.classList.add("answer-correct");
     feedback.textContent = `Acertou! +10 XP. ${question.explanation}`;
     feedback.classList.add("feedback-correct");
-    showXP();
   } else {
     selectedButton.classList.add("answer-wrong");
     optionButtons[question.answer].classList.add("answer-correct");
-    feedback.textContent = `Quase! ${question.explanation}`;
+    feedback.textContent = `Quase! A resposta correta é “${question.options[question.answer]}”. ${question.explanation}`;
     feedback.classList.add("feedback-wrong");
   }
 
   scoreLabel.textContent = `Acertos: ${correctAnswers}`;
-  progressFill.style.width = `${((currentQuestion + 1) / subject.questions.length) * 100}%`;
+  progressFill.style.width = `${((currentQuestion + 1) / totalQuestions) * 100}%`;
   nextButton.disabled = false;
+  showXP();
 }
 
 function showResults() {
-  finished = true;
-  questionCount.textContent = "Missão concluída";
+  const result = EduQuestStorage.saveResult(subjectKey, correctAnswers, totalQuestions);
+  const perfect = correctAnswers === totalQuestions;
+  const good = correctAnswers >= Math.ceil(totalQuestions * 0.6);
+
+  questionView.hidden = true;
+  resultView.hidden = false;
+  questionCount.textContent = "Resultado da rodada";
+  scoreLabel.textContent = `Acertos: ${correctAnswers} de ${totalQuestions}`;
   progressFill.style.width = "100%";
-  questionText.textContent = `Você acertou ${correctAnswers} de ${subject.questions.length}!`;
-  optionsContainer.replaceChildren();
-  feedback.className = "quiz-feedback feedback-correct";
-  feedback.textContent = correctAnswers === subject.questions.length
-    ? "Mandou muito bem! Você concluiu todas as questões."
-    : "Boa prática! Você pode tentar novamente e aprender com o feedback.";
-  nextButton.textContent = "Tentar novamente ↻";
-  nextButton.disabled = false;
+
+  resultTitle.textContent = perfect
+    ? "Perfeito! Você dominou esta jornada."
+    : good
+      ? "Boa jornada! O progresso apareceu."
+      : "Cada tentativa conta. Vamos de novo?";
+
+  resultMessage.textContent = perfect
+    ? "Você acertou todas as questões e mostrou domínio do conteúdo. Que tal explorar outra disciplina?"
+    : good
+      ? "Você está no caminho certo. Revise o feedback das questões e tente superar seu melhor resultado."
+      : "O importante é continuar praticando. Releia as explicações e refaça o desafio no seu ritmo.";
+
+  resultScore.textContent = `${correctAnswers}/${totalQuestions}`;
+  resultXP.textContent = `${roundXP} XP`;
+  resultBest.textContent = `${result.best}/${totalQuestions}`;
+
+  showXP();
+  resultView.focus();
 }
 
 nextButton.addEventListener("click", () => {
-  if (finished) {
-    currentQuestion = 0;
-    correctAnswers = 0;
-    renderQuestion();
-  } else if (currentQuestion < subject.questions.length - 1) {
+  if (currentQuestion < totalQuestions - 1) {
     currentQuestion++;
     renderQuestion();
   } else {
@@ -141,5 +163,18 @@ nextButton.addEventListener("click", () => {
   }
 });
 
+retryButton.addEventListener("click", () => {
+  currentQuestion = 0;
+  correctAnswers = 0;
+  roundXP = 0;
+  renderQuestion();
+  questionText.scrollIntoView?.({ behavior: "smooth", block: "center" });
+});
+
+title.innerHTML = `Desafio <span>${subject.title}</span>`;
+description.textContent = subject.description;
+document.title = `${subject.title} — Desafios EduQuest`;
+
+renderTabs();
 showXP();
 renderQuestion();
